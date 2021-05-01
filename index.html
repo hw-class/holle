@@ -107,7 +107,7 @@
       
 
     } else {
-      window.confirm('不支持访问用户媒体');
+      confirm('不支持访问用户媒体');
       $("#page-but").hide();
     }
 
@@ -161,10 +161,7 @@
         if(res.face_num == 1){
           let male  = res.faces[0].attributes.beauty.male_score;
           let female = res.faces[0].attributes.beauty.female_score;
-          var r = window.confirm("您在男人眼中的颜值是："+male+"分"+"\n您在女人眼中的颜值是："+female+"分");
-          if(r != null){
-          	$("#page-but").attr("disabled",false);
-          }
+          confirm("您在男人眼中的颜值是："+male+"分"+"\n您在女人眼中的颜值是："+female+"分");
         }
 
       }catch{
