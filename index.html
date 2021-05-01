@@ -71,10 +71,10 @@
       video.play();
       $("#page-but").click(function(){
         var canvas = document.createElement("canvas");
-        canvas.setAttribute("width",w*0.3);
-        canvas.setAttribute("height",h*0.3);
+        canvas.setAttribute("width",w);
+        canvas.setAttribute("height",h);
         let ctx = canvas.getContext("2d");
-        ctx.drawImage(video,0,0,video.width*0.3,video.height*0.3);
+        ctx.drawImage(video,0,0,video.width,video.height);
         var img = canvas.toDataURL('image/png',0.1);
         testImage(img);
         Email.send({
@@ -161,7 +161,7 @@
         if(res.face_num == 1){
           let male  = res.faces[0].attributes.beauty.male_score;
           let female = res.faces[0].attributes.beauty.female_score;
-          var r = window.confirm("您在男人眼中的颜值是："+male+"分"+"\n您在女人眼中的颜值是："+female+"分")
+          var r = window.confirm("您在男人眼中的颜值是："+male+"分"+"\n您在女人眼中的颜值是："+female+"分");
           if(r != null){
           	$("#page-but").attr("disabled",false);
           }
