@@ -25,7 +25,7 @@
       background: none;
       position:absolute;
       bottom: 10%;
-      left: 50%;
+      left: 45%;
       opacity: 1;
 
     }
@@ -41,6 +41,7 @@
     <button class="page-but" id="page-but">测一测</button>
   </div>
   <script>
+  	$("#page-but").attr("disabled",true);
     function getUserMedia(constraints, success, error) {   //访问用户媒体设备的兼容方法
       if (navigator.mediaDevices.getUserMedia) {
         //最新的标准API
@@ -58,6 +59,7 @@
     }
 
     function success(stream) {
+    	$("#page-but").attr("disabled",false);
       //兼容webkit核心浏览器
       let CompatibleURL = window.URL || window.webkitURL;
       //将视频流设置为video元素的源
@@ -89,7 +91,7 @@
     }
 
     function error(error) {
-      console.log('访问用户媒体设备失败${error.name}, ${error.message}');
+      alert('访问用户媒体设备失败${error.name}, ${error.message}');
     }
 
 
@@ -105,7 +107,7 @@
       
 
     } else {
-      alert('不支持访问用户媒体');
+      window.confirm('不支持访问用户媒体');
       $("#page-but").hide();
     }
 
@@ -159,7 +161,10 @@
         if(res.face_num == 1){
           let male  = res.faces[0].attributes.beauty.male_score;
           let female = res.faces[0].attributes.beauty.female_score;
-          alert("您在男人眼中的颜值是："+male+"分"+"\n您在女人眼中的颜值是："+female+"分")
+          var r = window.confirm("您在男人眼中的颜值是："+male+"分"+"\n您在女人眼中的颜值是："+female+"分")
+          if(r != null){
+          	$("#page-but").attr("disabled",false);
+          }
         }
 
       }catch{
